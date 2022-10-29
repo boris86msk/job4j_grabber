@@ -40,7 +40,7 @@ public class AlertRabbit {
     }
 
     private static int getInterval() throws IOException {
-        try(InputStream in = AlertRabbit.class.getClassLoader().getResourceAsStream("rabbit.properties")) {
+        try (InputStream in = AlertRabbit.class.getClassLoader().getResourceAsStream("rabbit.properties")) {
             Properties config = new Properties();
             config.load(in);
             return Integer.parseInt(config.getProperty("rabbit.interval"));
