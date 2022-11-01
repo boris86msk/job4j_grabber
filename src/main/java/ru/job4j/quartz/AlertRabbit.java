@@ -15,8 +15,9 @@ import static org.quartz.TriggerBuilder.*;
 import static org.quartz.SimpleScheduleBuilder.*;
 
 public class AlertRabbit {
-    public static void main(String[] args) {
-        try (Connection connection = getConnection()) {
+    public static void main(String[] args) throws Exception {
+        Properties properties = loadProperties();
+        try (Connection connection = getConnection(properties)) {
             try (Statement statement = connection.createStatement()) {
                 String sql = String.format(
                         "create table if not exists rabbit(%s, %s);",
@@ -32,7 +33,7 @@ public class AlertRabbit {
             scheduler.start();
             JobDataMap data = new JobDataMap();
             data.put("connect", connection);
-            int interval = Integer.parseInt(intervalProperties().getProperty("rabbit.interval"));
+            int interval = Integer.parseInt(properties.getProperty("rabbit.interval"));
             JobDetail job = newJob(Rabbit.class)
                     .usingJobData(data)
                     .build();
@@ -52,18 +53,17 @@ public class AlertRabbit {
         }
     }
 
-    private static Connection getConnection() throws Exception {
-            Properties config = intervalProperties();
-            Class.forName(config.getProperty("driver"));
+    private static Connection getConnection(Properties properties) throws Exception {
+            Class.forName(properties.getProperty("driver"));
             return DriverManager.getConnection(
-                    config.getProperty("url"),
-                    config.getProperty("login"),
-                    config.getProperty("password")
+                    properties.getProperty("url"),
+                    properties.getProperty("login"),
+                    properties.getProperty("password")
             );
 
     }
 
-    private static Properties intervalProperties() throws Exception {
+    private static Properties loadProperties() throws Exception {
         try (InputStream in = AlertRabbit.class.getClassLoader().getResourceAsStream("rabbit.properties")) {
             Properties config = new Properties();
             config.load(in);
