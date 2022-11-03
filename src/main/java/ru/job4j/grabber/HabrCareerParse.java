@@ -1,12 +1,12 @@
-package ru.job4j.quartz;
+package ru.job4j.grabber;
 
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import ru.job4j.utils.DateTimeParser;
-import ru.job4j.utils.HabrCareerDateTimeParser;
+import ru.job4j.grabber.utils.DateTimeParser;
+import ru.job4j.grabber.utils.HabrCareerDateTimeParser;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
