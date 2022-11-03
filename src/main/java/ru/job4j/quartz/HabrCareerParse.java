@@ -30,8 +30,22 @@ public class HabrCareerParse {
                 String date = dateElement.child(0).attr("datetime");
                 DateTimeParser parser = new HabrCareerDateTimeParser();
                 LocalDateTime dateTime = parser.parse(date);
-                System.out.printf("%s %s %s%n", vacancyName, link, dateTime);
+                String description = null;
+                try {
+                    description = retrieveDescription(link);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                System.out.printf("%s %s %s%n%s%n%n", vacancyName, link, dateTime, description);
+
             });
         }
+    }
+
+    private static String retrieveDescription(String link) throws IOException {
+        Connection connection = Jsoup.connect(link);
+        Document document = connection.get();
+        Element el = document.select(".basic-section--appearance-vacancy-description").first();
+        return el.child(1).text();
     }
 }
