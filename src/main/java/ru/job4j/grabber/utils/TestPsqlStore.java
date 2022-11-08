@@ -8,8 +8,8 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
 
-public class testPsqlStore {
-    public static void main(String[] args) throws IOException {
+public class TestPsqlStore {
+    public static void main(String[] args) {
         try (InputStream in = Store.class.getClassLoader().getResourceAsStream("rabbit.properties")) {
             Properties config = new Properties();
             config.load(in);
@@ -26,8 +26,8 @@ public class testPsqlStore {
 
             System.out.println(store.findById(2));
 
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
