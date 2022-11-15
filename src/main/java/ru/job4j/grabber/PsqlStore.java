@@ -1,5 +1,7 @@
 package ru.job4j.grabber;
 
+import org.apache.log4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.job4j.grabber.utils.Post;
 import ru.job4j.grabber.utils.Store;
 
@@ -10,6 +12,7 @@ import java.util.List;
 import java.util.Properties;
 
 public class PsqlStore implements Store, AutoCloseable {
+    private static final Logger LOG = (Logger) LoggerFactory.getLogger(PsqlStore.class.getName());
     private Connection cnn;
 
     public PsqlStore(Properties cfg) {
@@ -20,22 +23,23 @@ public class PsqlStore implements Store, AutoCloseable {
             String password = cfg.getProperty("password");
             cnn = DriverManager.getConnection(url, login, password);
         } catch (Exception e) {
-            throw new IllegalStateException(e);
+            LOG.error("Configuration error", e);
         }
     }
 
     @Override
     public void save(Post post) {
         Timestamp timestampFromLDT = Timestamp.valueOf(post.getCreated());
-        try (PreparedStatement ps = cnn.prepareStatement("insert into post"
-                + "(name, text, link, created) values(?, ?, ?, ?)")) {
+        try (PreparedStatement ps = cnn.prepareStatement("INSERT INTO post"
+                + "(name, text, link, created) values(?, ?, ?, ?)"
+                + "ON CONFLICT (link) DO NOTHING")) {
             ps.setString(1, post.getTitle());
             ps.setString(2, post.getDescription());
             ps.setString(3, post.getLink());
             ps.setTimestamp(4, timestampFromLDT);
             ps.execute();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            LOG.error("Exception in data retention", e);
         }
 
     }
@@ -50,7 +54,7 @@ public class PsqlStore implements Store, AutoCloseable {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error("Exception in getting a list", e);
         }
         return postList;
     }
@@ -66,7 +70,7 @@ public class PsqlStore implements Store, AutoCloseable {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error("Exception in getting an object by id", e);
         }
         return post;
     }

@@ -17,14 +17,14 @@ public class TestPsqlStore {
             DateTimeParser dtp = new HabrCareerDateTimeParser();
             Parse parse = new HabrCareerParse(dtp);
 
-            List<Post> list = parse.list();
-            for (Post post : list) {
-                store.save(post);
-            }
+//            List<Post> list = parse.list();
+//            for (Post post : list) {
+//                store.save(post);
+//            }
 
-            store.getAll().forEach(System.out::println);
+           // store.getAll().forEach(System.out::println);
 
-            System.out.println(store.findById(2));
+            System.out.println(store.findById(20));
 
         } catch (IOException e) {
             e.printStackTrace();
