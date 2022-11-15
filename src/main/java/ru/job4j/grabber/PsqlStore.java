@@ -1,6 +1,6 @@
 package ru.job4j.grabber;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.job4j.grabber.utils.Post;
 import ru.job4j.grabber.utils.Store;
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Properties;
 
 public class PsqlStore implements Store, AutoCloseable {
-    private static final Logger LOG = (Logger) LoggerFactory.getLogger(PsqlStore.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(PsqlStore.class.getName());
     private Connection cnn;
 
     public PsqlStore(Properties cfg) {
