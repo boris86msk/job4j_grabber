@@ -25,6 +25,10 @@ public class Post {
         this.created = created;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public void setTitle(String title) {
         this.title = title;
     }
@@ -88,4 +92,5 @@ public class Post {
     public int hashCode() {
         return Objects.hash(id, link);
     }
+
 }

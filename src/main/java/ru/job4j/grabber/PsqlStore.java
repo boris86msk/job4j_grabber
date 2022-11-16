@@ -32,12 +32,17 @@ public class PsqlStore implements Store, AutoCloseable {
         Timestamp timestampFromLDT = Timestamp.valueOf(post.getCreated());
         try (PreparedStatement ps = cnn.prepareStatement("INSERT INTO post"
                 + "(name, text, link, created) values(?, ?, ?, ?)"
-                + "ON CONFLICT (link) DO NOTHING")) {
+                + "ON CONFLICT (link) DO NOTHING", Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, post.getTitle());
             ps.setString(2, post.getDescription());
             ps.setString(3, post.getLink());
             ps.setTimestamp(4, timestampFromLDT);
             ps.execute();
+            try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    post.setId(generatedKeys.getInt(1));
+                }
+            }
         } catch (SQLException e) {
             LOG.error("Exception in data retention", e);
         }
