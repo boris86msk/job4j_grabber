@@ -16,7 +16,7 @@ public class TestPsqlStore {
         try (InputStream in = Store.class.getClassLoader().getResourceAsStream("rabbit.properties")) {
             Properties config = new Properties();
             config.load(in);
-            try (Store store = new PsqlStore(config)) {
+            try (PsqlStore store = new PsqlStore(config)) {
                 DateTimeParser dtp = new HabrCareerDateTimeParser();
                 Parse parse = new HabrCareerParse(dtp);
 
