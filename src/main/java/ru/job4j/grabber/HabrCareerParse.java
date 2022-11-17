@@ -5,6 +5,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.job4j.grabber.utils.DateTimeParser;
 import ru.job4j.grabber.utils.Parse;
 import ru.job4j.grabber.utils.Post;
@@ -15,11 +17,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HabrCareerParse implements Parse {
+    private static final Logger LOG = LoggerFactory.getLogger(HabrCareerParse.class.getName());
     private static final String SOURCE_LINK = "https://career.habr.com";
 
     private static final String PAGE_LINK = String.format("%s/vacancies/java_developer?page=", SOURCE_LINK);
 
-    private static final int PAGES = 1;
+    private static final int PAGES = 5;
     private final DateTimeParser dateTimeParser;
 
     public HabrCareerParse(DateTimeParser dtParser) {
@@ -46,7 +49,7 @@ public class HabrCareerParse implements Parse {
         try {
             description = retrieveDescription(link);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("error in parsePost()", e);
         }
         return new Post(vacancyName, link, description, dateTime);
     }
@@ -64,7 +67,7 @@ public class HabrCareerParse implements Parse {
                 });
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("error of read list Post", e);
         }
         return listPost;
     }

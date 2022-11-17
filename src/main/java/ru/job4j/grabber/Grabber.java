@@ -5,6 +5,8 @@ import static org.quartz.JobBuilder.*;
 import static org.quartz.TriggerBuilder.*;
 import static org.quartz.SimpleScheduleBuilder.*;
 import org.quartz.impl.StdSchedulerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.job4j.grabber.utils.*;
 
 import java.io.IOException;
@@ -15,6 +17,7 @@ import java.net.Socket;
 import java.util.Properties;
 
 public class Grabber implements Grab {
+    private static final Logger LOG = LoggerFactory.getLogger(Grabber.class.getName());
     private final Properties cfg = new Properties();
 
     public Store store() {
@@ -27,9 +30,11 @@ public class Grabber implements Grab {
         return scheduler;
     }
 
-    public void cfg() throws IOException {
+    public void cfg() {
         try (InputStream in = Grabber.class.getClassLoader().getResourceAsStream("grabber.properties")) {
             cfg.load(in);
+        } catch (IOException e) {
+            LOG.error("error loading the configuration file", e);
         }
     }
 
@@ -63,7 +68,7 @@ public class Grabber implements Grab {
                     store.save(post);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                LOG.error("error of execute method", e);
             }
         }
     }
@@ -80,11 +85,11 @@ public class Grabber implements Grab {
                             out.write(System.lineSeparator().getBytes());
                         }
                     } catch (IOException io) {
-                        io.printStackTrace();
+                        LOG.error("form entry error", io);
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                LOG.error("server error", e);
             }
         }).start();
     }
